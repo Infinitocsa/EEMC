@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo de Layout</title>
+    <title>Exemplo de Layout Responsivo</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,6 +43,39 @@
             padding: 20px;
             text-align: center;
             color: white;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .div-superior {
+                flex-direction: column;
+            }
+            .div-superior .subdiv {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .div-lado-a-lado {
+                flex-direction: column;
+            }
+            .div-lateral {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            .div-superior {
+                padding: 10px;
+            }
+            .div-lado-a-lado {
+                margin: 10px 0;
+            }
+            .div-lateral, .div-inferior {
+                padding: 10px;
+            }
         }
     </style>
 </head>
