@@ -15,10 +15,17 @@
             padding: 20px;
         }
         .div-superior {
+            display: flex;
+            justify-content: space-between;
             background-color: #4CAF50;
             padding: 20px;
             text-align: center;
             color: white;
+        }
+        .div-superior .subdiv {
+            width: 32%;
+            background-color: #388E3C;
+            padding: 10px;
         }
         .div-lado-a-lado {
             display: flex;
@@ -42,9 +49,20 @@
 <body>
 
     <div class="container">
-        <!-- Div Superior -->
+        <!-- Div Superior com 3 sub-divs -->
         <div class="div-superior">
-            <h1>Div Superior</h1>
+            <div class="subdiv">
+                <h2>Subdiv 1</h2>
+                <p>Conteúdo da Subdiv 1</p>
+            </div>
+            <div class="subdiv">
+                <h2>Subdiv 2</h2>
+                <p>Conteúdo da Subdiv 2</p>
+            </div>
+            <div class="subdiv">
+                <h2>Subdiv 3</h2>
+                <p>Conteúdo da Subdiv 3</p>
+            </div>
         </div>
 
         <!-- Duas Divs Lado a Lado -->
