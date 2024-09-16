@@ -3,78 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo de Layout Responsivo</title>
+    <title>Exemplo de Página Responsiva</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
         }
         .container {
-            width: 100%;
+            text-align: center;
             padding: 20px;
         }
-        .div-superior {
-            display: flex;
-            justify-content: space-between;
+        .responsive-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .link-button {
+            display: inline-block;
+            padding: 10px 20px;
             background-color: #4CAF50;
-            padding: 20px;
-            text-align: center;
             color: white;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
-        .div-superior .subdiv {
-            width: 32%;
-            background-color: #388E3C;
-            padding: 10px;
-        }
-        .div-lado-a-lado {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-        }
-        .div-lateral {
-            background-color: #f1f1f1;
-            width: 48%;
-            padding: 20px;
-            text-align: center;
-        }
-        .div-inferior {
-            background-color: #2196F3;
-            padding: 20px;
-            text-align: center;
-            color: white;
+        .link-button:hover {
+            background-color: #45a049;
         }
 
         /* Responsividade */
         @media (max-width: 768px) {
-            .div-superior {
-                flex-direction: column;
-            }
-            .div-superior .subdiv {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            .div-lado-a-lado {
-                flex-direction: column;
-            }
-            .div-lateral {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
             .container {
                 padding: 10px;
             }
-            .div-superior {
-                padding: 10px;
-            }
-            .div-lado-a-lado {
-                margin: 10px 0;
-            }
-            .div-lateral, .div-inferior {
-                padding: 10px;
+            .link-button {
+                font-size: 14px;
+                padding: 8px 16px;
             }
         }
     </style>
@@ -82,40 +53,10 @@
 <body>
 
     <div class="container">
-        <!-- Div Superior com 3 sub-divs -->
-        <div class="div-superior">
-            <div class="subdiv">
-                <h2>Subdiv 1</h2>
-                <p>Conteúdo da Subdiv 1</p>
-            </div>
-            <div class="subdiv">
-                <h2>Subdiv 2</h2>
-                <p>Conteúdo da Subdiv 2</p>
-            </div>
-            <div class="subdiv">
-                <h2>Subdiv 3</h2>
-                <p>Conteúdo da Subdiv 3</p>
-            </div>
-        </div>
-
-        <!-- Duas Divs Lado a Lado -->
-        <div class="div-lado-a-lado">
-            <div class="div-lateral">
-                <h2>Div Esquerda</h2>
-                <p>Conteúdo da Div Esquerda</p>
-            </div>
-            <div class="div-lateral">
-                <h2>Div Direita</h2>
-                <p>Conteúdo da Div Direita</p>
-            </div>
-        </div>
-
-        <!-- Div Inferior -->
-        <div class="div-inferior">
-            <h2>Div Inferior</h2>
-            <p>Conteúdo da Div Inferior</p>
-        </div>
+        <img src="image/diego.jpg" alt="Imagem Exemplo" class="responsive-img">
+        <a href="https://www.exemplo.com" class="link-button">Visitar Link</a>
     </div>
 
 </body>
 </html>
+
