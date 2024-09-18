@@ -1,62 +1,22 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo de Página Responsiva</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-        }
-        .responsive-img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .link-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .link-button:hover {
-            background-color: #45a049;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            .link-button {
-                font-size: 14px;
-                padding: 8px 16px;
-            }
-        }
-    </style>
+    <title>Círculo de Leitura e Escrita</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
     <div class="container">
-        <img src="image/diego.jpg" alt="Imagem Exemplo" class="responsive-img">
-        <a href="https://youtu.be/KJceitCyL-4" class="link-button">Visitar Link</a>
+        <div class="header">
+            <img src="/images/logo1.png" alt="Logo da Escola" class="logo-escola">
+            <h1>CÍRCULO DE LEITURA E ESCRITA</h1>
+            <img src="/images/logo2.png" alt="Logo da EJA" class="logo-eja">
+        </div>
+        <div class="profile">
+            <iframe src="https://www.youtube.com/embed/KJceitCyL-4" frameborder="0" width="420" height="315"></iframe>
+            <p><strong>Diego V. Alexandre,</strong><br> estudante, <br> adoro café, <br> amo Matemática, <br> jogador de Minecraft.</p>
+        </div>
     </div>
-
 </body>
 </html>
-
