@@ -1,59 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <title>Hello WebXR!</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>WebAR com Webcam</title>
 
-  <!-- three.js -->
-  <script src="https://unpkg.com/three@0.126.0/build/three.js"></script>
-</head>
-<body>
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
-<!-- Iniciar uma sessão imersiva de WebXR requer interação do usuário.
-Iniciamos esta com um simples botão. -->
-<button onclick="activateXR()">Start Hello WebXR</button>
-<script>
-async function activateXR() {
-  // Adicione um elemento canvas e inicialize um contexto WebGL compatível com WebXR.
-  const canvas = document.createElement("canvas");
-  document.body.appendChild(canvas);
-  const gl = canvas.getContext("webgl", {xrCompatible: true});
-const scene = new THREE.Scene();
+    <!-- AR.js (versão com suporte a webcam e markers) -->
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.4/aframe/build/aframe-ar.js"></script>
 
-// The cube will have a different color on each side.
-const materials = [
-  new THREE.MeshBasicMaterial({color: 0xff0000}),
-  new THREE.MeshBasicMaterial({color: 0x0000ff}),
-  new THREE.MeshBasicMaterial({color: 0x00ff00}),
-  new THREE.MeshBasicMaterial({color: 0xff00ff}),
-  new THREE.MeshBasicMaterial({color: 0x00ffff}),
-  new THREE.MeshBasicMaterial({color: 0xffff00})
-];
+    <style>
+      body, html {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
 
-// Create the cube and add it to the demo scene.
-const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials);
-cube.position.set(1, 1, 1);
-scene.add(cube);
+  <body>
+    <a-scene embedded arjs="sourceType: webcam;">
+      <!-- Marca Hiro padrão -->
+      <a-marker preset="hiro">
+        <!-- Um cubo 3D -->
+        <a-box position="0 0.5 0" material="color: red;"></a-box>
+      </a-marker>
 
-  // Continua nos próximos passos..
-  // Set up the WebGLRenderer, which handles rendering to the session's base layer.
-const renderer = new THREE.WebGLRenderer({
-  alpha: true,
-  preserveDrawingBuffer: true,
-  canvas: canvas,
-  context: gl
-});
-renderer.autoClear = false;
-
-// The API directly updates the camera matrices.
-// Disable matrix auto updates so three.js doesn't attempt
-// to handle the matrices independently.
-const camera = new THREE.PerspectiveCamera();
-camera.matrixAutoUpdate = false;
-
-}
-</script>
-</body>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
 </html>
