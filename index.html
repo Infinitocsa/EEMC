@@ -1,25 +1,37 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Círculo de Leitura e Escrita</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hello WebXR - Projeto AR</title>
+  <meta name="description" content="Exemplo mínimo WebXR (AR) pronto para GitHub Pages.">
+  <style>
+    body { margin:0; font-family: sans-serif; background:#fff; color:#222; }
+    #info { position: fixed; left: 12px; bottom: 12px; background: rgba(255,255,255,0.9); padding:8px 12px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
+    button { padding:8px 12px; font-size:14px; }
+    canvas { display:block; width:100%; height:100%; }
+    .screenshot { max-width:240px; border:1px solid #ddd; margin-top:8px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="image/logo1.png" alt="Logo da Escola" class="logo-escola">
-            <h1>CÍRCULO DE LEITURA E ESCRITA</h1>
-            <img src="image/logo2.png" alt="Logo da EJA" class="logo-eja">
-        </div>
-        <div class="profile">
-           <div class="video-container">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/KJceitCyL-4" 
-                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <p><strong>Diego V. Alexandre,</strong><br> estudante, <br> adoro café, <br> amo Matemática, <br> jogador de Minecraft.</p>
-        </div>
+  <div id="container"></div>
+
+  <div id="info">
+    <div><strong>Hello WebXR (AR)</strong></div>
+    <div style="margin-top:6px;">
+      Abra este site em um <em>Android</em> (Chrome atualizado) com suporte a WebXR + ARCore.
     </div>
+    <div style="margin-top:8px;">
+      <button id="startBtn">Start Hello WebXR</button>
+    </div>
+    <img src="screenshot.png" alt="screenshot" class="screenshot">
+    <div style="margin-top:8px; font-size:13px; color:#666;">
+      Dica: hospede no GitHub Pages (HTTPS) e abra o link no Chrome do celular.
+    </div>
+  </div>
+
+  <!-- three.js -->
+  <script src="https://unpkg.com/three@0.126.0/build/three.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
