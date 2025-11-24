@@ -1,37 +1,59 @@
 <!doctype html>
-<html lang="pt-BR">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Hello WebXR - Projeto AR</title>
-  <meta name="description" content="Exemplo mínimo WebXR (AR) pronto para GitHub Pages.">
-  <style>
-    body { margin:0; font-family: sans-serif; background:#fff; color:#222; }
-    #info { position: fixed; left: 12px; bottom: 12px; background: rgba(255,255,255,0.9); padding:8px 12px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
-    button { padding:8px 12px; font-size:14px; }
-    canvas { display:block; width:100%; height:100%; }
-    .screenshot { max-width:240px; border:1px solid #ddd; margin-top:8px; }
-  </style>
-</head>
-<body>
-  <div id="container"></div>
-
-  <div id="info">
-    <div><strong>Hello WebXR (AR)</strong></div>
-    <div style="margin-top:6px;">
-      Abra este site em um <em>Android</em> (Chrome atualizado) com suporte a WebXR + ARCore.
-    </div>
-    <div style="margin-top:8px;">
-      <button id="startBtn">Start Hello WebXR</button>
-    </div>
-    <img src="screenshot.png" alt="screenshot" class="screenshot">
-    <div style="margin-top:8px; font-size:13px; color:#666;">
-      Dica: hospede no GitHub Pages (HTTPS) e abra o link no Chrome do celular.
-    </div>
-  </div>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Hello WebXR!</title>
 
   <!-- three.js -->
   <script src="https://unpkg.com/three@0.126.0/build/three.js"></script>
-  <script src="app.js"></script>
+</head>
+<body>
+
+<!-- Iniciar uma sessão imersiva de WebXR requer interação do usuário.
+Iniciamos esta com um simples botão. -->
+<button onclick="activateXR()">Start Hello WebXR</button>
+<script>
+async function activateXR() {
+  // Adicione um elemento canvas e inicialize um contexto WebGL compatível com WebXR.
+  const canvas = document.createElement("canvas");
+  document.body.appendChild(canvas);
+  const gl = canvas.getContext("webgl", {xrCompatible: true});
+const scene = new THREE.Scene();
+
+// The cube will have a different color on each side.
+const materials = [
+  new THREE.MeshBasicMaterial({color: 0xff0000}),
+  new THREE.MeshBasicMaterial({color: 0x0000ff}),
+  new THREE.MeshBasicMaterial({color: 0x00ff00}),
+  new THREE.MeshBasicMaterial({color: 0xff00ff}),
+  new THREE.MeshBasicMaterial({color: 0x00ffff}),
+  new THREE.MeshBasicMaterial({color: 0xffff00})
+];
+
+// Create the cube and add it to the demo scene.
+const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials);
+cube.position.set(1, 1, 1);
+scene.add(cube);
+
+  // Continua nos próximos passos..
+  // Set up the WebGLRenderer, which handles rendering to the session's base layer.
+const renderer = new THREE.WebGLRenderer({
+  alpha: true,
+  preserveDrawingBuffer: true,
+  canvas: canvas,
+  context: gl
+});
+renderer.autoClear = false;
+
+// The API directly updates the camera matrices.
+// Disable matrix auto updates so three.js doesn't attempt
+// to handle the matrices independently.
+const camera = new THREE.PerspectiveCamera();
+camera.matrixAutoUpdate = false;
+
+}
+</script>
 </body>
 </html>
