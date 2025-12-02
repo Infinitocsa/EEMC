@@ -1,27 +1,75 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Painel RA com Vídeo do YouTube</title>
+
+    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+
+    <style>
+      body, html {
+        margin: 0; padding: 0;
+        overflow: hidden;
+      }
+
+      /* Iframe do vídeo que aparece sobre o painel */
+      #videoFrame {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 320px; height: 180px;
+        transform: translate(-50%, -50%);
+        border: none;
+        display: none; /* só aparece quando o marcador é detectado */
+      }
+    </style>
   </head>
 
-  <body style="margin: 0; overflow: hidden;">
+  <body>
+    <!-- Iframe do YouTube -->
+    <iframe id="videoFrame"
+      src="https://www.youtube.com/embed/Bgek1t8C_EQ?autoplay=1&mute=1">
+    </iframe>
 
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-      
-      <a-marker preset="hiro">
-        
-        <!-- IMPORTAÇÃO DO OBJ -->
-        <a-entity obj-model="obj: url(modelo.obj); mtl: url(modelo.mtl)"
-                  position="0 0 0"
-                  scale="0.5 0.5 0.5"
-                  rotation="0 0 0">
-        </a-entity>
+    <!-- Cena RA -->
+    <a-scene embedded arjs="sourceType: webcam;">
+
+      <!-- Marcador -->
+      <a-marker preset="hiro" 
+                emitevents="true">
+
+        <!-- Painel (como na imagem) -->
+        <a-box position="0 0 0"
+               width="1.6" height="0.9" depth="0.05"
+               color="#FFFFFF">
+        </a-box>
+
+        <!-- Moldura do painel -->
+        <a-box position="0 0 0.028"
+               width="1.7" height="1.0" depth="0.02"
+               color="#222222">
+        </a-box>
 
       </a-marker>
 
       <a-entity camera></a-entity>
+
     </a-scene>
+
+    <script>
+      const marker = document.querySelector("a-marker");
+      const video = document.getElementById("videoFrame");
+
+      marker.addEventListener("markerFound", () => {
+        video.style.display = "block";
+      });
+
+      marker.addEventListener("markerLost", () => {
+        video.style.display = "none";
+      });
+    </script>
 
   </body>
 </html>
