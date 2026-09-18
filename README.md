@@ -36,7 +36,3 @@ assets/
 ## Resultado
 
 Ao apontar a câmera para `imagem-alvo.png`, o logo da escola aparece sobre o marcador, em pé, girando continuamente no eixo X.
-
-
-## Versão corrigida para celular
-Esta versão força o vídeo da câmera, o canvas e a cena do MindAR a ocupar toda a viewport do celular, evitando que a câmera apareça apenas em uma faixa lateral.
