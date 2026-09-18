@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gerar targets.mind — AR Escola</title>
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/dist/mindar-image.prod.js"></script>
 <style>
 *{box-sizing:border-box}body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:24px 18px;background:#f4f6fb;color:#17204a}.card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 30px #0001}button{padding:13px 20px;border:0;border-radius:10px;background:#172b8a;color:#fff;font-weight:bold;cursor:pointer}button:disabled{opacity:.55;cursor:wait}#progress{margin:15px 0;font-weight:bold;line-height:1.4}#preview{max-width:100%;max-height:420px;display:block;margin:15px 0;border-radius:10px}small{color:#555}
 </style>
@@ -29,7 +29,7 @@ button.addEventListener('click',async()=>{
     img.crossOrigin='anonymous';
     img.src='./assets/imagem-alvo.png';
     await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('Não foi possível carregar a imagem-alvo.'));});
-    const Compiler=window.MINDAR && window.MINDAR.IMAGE && window.MINDAR.IMAGE.Compiler;
+    const Compiler=window.MINDAR && window.MINDAR.Compiler;
     if(!Compiler) throw new Error('Compiler do MindAR não foi carregado. Verifique sua conexão com a internet.');
     const compiler=new Compiler();
     progress.textContent='Compilando a imagem-alvo… aguarde.';
