@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071b4d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Realidade Aumentada — Escola Municipal</title>
 
   <!-- Versões atuais recomendadas pelo exemplo oficial do MindAR -->
@@ -13,7 +15,50 @@
   <style>
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif}
-    #scene{width:100%;height:100%}
+    /* ===== CORREÇÃO DE TELA/CÂMERA PARA CELULAR ===== */
+    #scene, a-scene {
+      position:fixed !important;
+      inset:0 !important;
+      width:100vw !important;
+      height:100vh !important;
+      min-width:100vw !important;
+      min-height:100vh !important;
+      margin:0 !important;
+      padding:0 !important;
+      overflow:hidden !important;
+    }
+    #scene canvas, a-scene canvas, .a-canvas {
+      position:fixed !important;
+      left:0 !important;
+      top:0 !important;
+      width:100vw !important;
+      height:100vh !important;
+      min-width:100vw !important;
+      min-height:100vh !important;
+      margin:0 !important;
+      padding:0 !important;
+      display:block !important;
+    }
+    /* MindAR cria o vídeo da câmera dinamicamente. */
+    body > video, body > .mindar-video, video.mindar-video, video[class*="mindar"], #mindar-video {
+      position:fixed !important;
+      left:0 !important;
+      top:0 !important;
+      width:100vw !important;
+      height:100vh !important;
+      max-width:none !important;
+      max-height:none !important;
+      min-width:100vw !important;
+      min-height:100vh !important;
+      margin:0 !important;
+      padding:0 !important;
+      object-fit:cover !important;
+      object-position:center center !important;
+      display:block !important;
+      z-index:0 !important;
+    }
+    a-scene { z-index:1 !important; }
+    .a-enter-vr, .a-enter-ar { display:none !important; }
     .ui{
       position:fixed;z-index:20;left:50%;top:14px;transform:translateX(-50%);
       width:min(94vw,560px);padding:12px 16px;border-radius:16px;
