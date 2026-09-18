@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gerar targets.mind — AR Escola</title>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+<style>
+*{box-sizing:border-box}body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:24px 18px;background:#f4f6fb;color:#17204a}.card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 30px #0001}button{padding:13px 20px;border:0;border-radius:10px;background:#172b8a;color:#fff;font-weight:bold;cursor:pointer}button:disabled{opacity:.55;cursor:wait}#progress{margin:15px 0;font-weight:bold;line-height:1.4}#preview{max-width:100%;max-height:420px;display:block;margin:15px 0;border-radius:10px}small{color:#555}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Gerar o arquivo targets.mind</h1>
+<p>Será usada a imagem <b>assets/imagem-alvo.png</b> como marcador da realidade aumentada.</p>
+<img id="preview" src="./assets/imagem-alvo.png" alt="Imagem-alvo">
+<div id="progress">Imagem-alvo carregada.</div>
+<button id="compile">COMPILAR E BAIXAR</button>
+<p><small>O processamento acontece no navegador. Depois do download, coloque <b>targets.mind</b> na mesma pasta de <b>index.html</b>.</small></p>
+</div>
+<script>
+const progress=document.querySelector('#progress');
+const button=document.querySelector('#compile');
+button.addEventListener('click',async()=>{
+  button.disabled=true;
+  try{
+    progress.textContent='Preparando imagem…';
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.src='./assets/imagem-alvo.png';
+    await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('Não foi possível carregar a imagem-alvo.'));});
+    const Compiler=window.MINDAR && window.MINDAR.IMAGE && window.MINDAR.IMAGE.Compiler;
+    if(!Compiler) throw new Error('Compiler do MindAR não foi carregado. Verifique sua conexão com a internet.');
+    const compiler=new Compiler();
+    progress.textContent='Compilando a imagem-alvo… aguarde.';
+    await compiler.compileImageTargets([img],p=>{
+      const percent=Number(p)*100;
+      progress.textContent='Compilando: '+percent.toFixed(1)+'%';
+    });
+    const buffer=await compiler.exportData();
+    const blob=new Blob([buffer],{type:'application/octet-stream'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='targets.mind';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    progress.textContent='Pronto! Copie targets.mind para a mesma pasta de index.html.';
+  }catch(err){
+    console.error(err);
+    progress.textContent='Erro: '+(err.message||err);
+  }finally{button.disabled=false;}
+});
+</script>
+</body>
+</html>
