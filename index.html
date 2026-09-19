@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071b4d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Realidade Aumentada — Escola Municipal</title>
 
   <!-- Versões atuais recomendadas pelo exemplo oficial do MindAR -->
@@ -13,7 +15,77 @@
   <style>
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif}
-    #scene{width:100%;height:100%}
+    /* ===== CÂMERA EM TELA CHEIA — MOBILE ===== */
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      background: #000 !important;
+    }
+
+    #scene, a-scene {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      min-width: 100vw !important;
+      min-height: 100dvh !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      background: transparent !important;
+      z-index: 2 !important;
+    }
+
+    #scene canvas, a-scene canvas, .a-canvas {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      min-width: 100vw !important;
+      min-height: 100dvh !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+      background: transparent !important;
+      z-index: 2 !important;
+    }
+
+    /* MindAR cria o <video> dinamicamente. O vídeo fica atrás do canvas transparente. */
+    body > video,
+    a-scene video,
+    video.mindar-video,
+    video[id*="mindar"],
+    video[class*="mindar"] {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      min-width: 100vw !important;
+      min-height: 100dvh !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      transform: none !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 1 !important;
+    }
+
+    .a-enter-vr, .a-enter-ar { display: none !important; }
+
     .ui{
       position:fixed;z-index:20;left:50%;top:14px;transform:translateX(-50%);
       width:min(94vw,560px);padding:12px 16px;border-radius:16px;
@@ -53,7 +125,7 @@
     id="scene"
     mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 8; warmupTolerance: 5; uiLoading: no; uiScanning: no; uiError: no;"
     color-space="sRGB"
-    renderer="colorManagement: true; physicallyCorrectLights: true"
+    renderer="alpha: true; colorManagement: true; physicallyCorrectLights: true; preserveDrawingBuffer: false"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
     embedded>
@@ -65,16 +137,16 @@
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <a-entity id="target" mindar-image-target="targetIndex: 0">
-      <!-- Plano inicialmente vertical; a animação gira no eixo Y. -->
+      <!-- Plano inicialmente vertical; a animação gira no eixo X. -->
       <a-plane
         id="logoPlane"
         src="#logo"
         position="0 0.30 0.18"
         width="0.62"
         height="0.615"
-        rotation="0 90 0"
+        rotation="90 0 0"
         material="transparent: true; alphaTest: 0.05; side: double"
-        animation__spin="property: rotation; from: 0 90 0; to: 0 450 0; dur: 2800; easing: linear; loop: true">
+        animation__spin="property: rotation; from: 90 0 0; to: 450 0 0; dur: 2800; easing: linear; loop: true">
       </a-plane>
     </a-entity>
   </a-scene>
@@ -87,6 +159,38 @@
     const button = document.querySelector('#startButton');
     const help = document.querySelector('#help');
     const debug = document.querySelector('#debug');
+
+    // O MindAR cria a câmera depois que a cena é carregada.
+    // Reaplicamos o layout para impedir que o navegador mantenha o vídeo estreito/deslocado.
+    function forceCameraLayout() {
+      document.querySelectorAll('video').forEach(video => {
+        if (video.srcObject || video.className.toString().toLowerCase().includes('mindar') || video.id.toLowerCase().includes('mindar')) {
+          video.setAttribute('playsinline', '');
+          video.style.setProperty('position', 'fixed', 'important');
+          video.style.setProperty('left', '0', 'important');
+          video.style.setProperty('top', '0', 'important');
+          video.style.setProperty('right', '0', 'important');
+          video.style.setProperty('bottom', '0', 'important');
+          video.style.setProperty('width', '100vw', 'important');
+          video.style.setProperty('height', '100dvh', 'important');
+          video.style.setProperty('min-width', '100vw', 'important');
+          video.style.setProperty('min-height', '100dvh', 'important');
+          video.style.setProperty('max-width', 'none', 'important');
+          video.style.setProperty('max-height', 'none', 'important');
+          video.style.setProperty('transform', 'none', 'important');
+          video.style.setProperty('object-fit', 'cover', 'important');
+          video.style.setProperty('object-position', 'center center', 'important');
+          video.style.setProperty('z-index', '1', 'important');
+        }
+      });
+    }
+
+    const cameraObserver = new MutationObserver(forceCameraLayout);
+    cameraObserver.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('resize', forceCameraLayout);
+    window.addEventListener('orientationchange', () => setTimeout(forceCameraLayout, 250));
+    setInterval(forceCameraLayout, 1000);
+    forceCameraLayout();
 
     function setStatus(text, color) {
       status.textContent = text;
