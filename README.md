@@ -13,7 +13,7 @@ Projeto de realidade aumentada com MindAR + A-Frame.
 
 Abra a página publicada:
 
-`https://SEU-USUARIO.github.io/RA-Esc-Magalhaes-Cordeiro/01-gerar-target.html`
+` https://infinitocsa.github.io/EEMC/01-gerar-target.html`
 
 Clique em **COMPILAR E BAIXAR**. O navegador baixará `targets.mind`.
 
