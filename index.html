@@ -26,24 +26,13 @@
 @keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.04);opacity:1}}@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:430px){.menuGrid{gap:7px}.menuBtn{min-height:68px;font-size:11px}.menuCard{padding:18px 12px 15px}.portal{width:190px;height:190px}}
 
-/* CORREÇÃO DE TELA MÓVEL — câmera e cena AR em tela cheia */
-a-scene#scene { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; min-width: 100vw !important; min-height: 100dvh !important; margin: 0 !important; padding: 0 !important; display: block !important; }
-a-scene#scene .a-canvas { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; }
-a-scene#scene video, a-scene#scene .mindar-video, a-scene#scene .mindar-ui-overlay { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; max-width: none !important; max-height: none !important; margin: 0 !important; padding: 0 !important; object-fit: cover !important; }
-body > a-scene#scene { overflow: hidden !important; }
-@supports not (height: 100dvh) { a-scene#scene, a-scene#scene .a-canvas, a-scene#scene video, a-scene#scene .mindar-video { height: 100vh !important; } }
-@media (max-width: 600px) {
-  #arMenu { width: min(92vw, 560px); top: 56%; }
-  .menuCard { padding: 24px 18px 20px; border-radius: 26px; }
-  .menuCard h2 { font-size: clamp(19px, 5vw, 25px); }
-  .menuCard p { font-size: 13px; margin-bottom: 18px; }
-  .menuGrid { gap: 10px; }
-  .menuBtn { min-height: 86px; font-size: 12px; border-radius: 18px; }
-  .menuBtn .ico { font-size: 28px; margin-bottom: 6px; }
-  .tagline { font-size: 10px; letter-spacing: 1.5px; }
-  .portal { width: min(58vw, 300px); height: min(58vw, 300px); }
-}
-@media (orientation: landscape) and (max-height: 600px) { #arMenu { top: 56%; width: min(80vw, 700px); } .menuCard { padding: 12px 16px; } .menuBtn { min-height: 62px; } .menuBtn .ico { font-size: 20px; } }
+/* V8 — correção definitiva do vídeo MindAR em celulares */
+html, body { width:100% !important; height:100% !important; margin:0 !important; padding:0 !important; overflow:hidden !important; background:#000 !important; }
+body { position:fixed !important; inset:0 !important; }
+a-scene#scene, a-scene#scene.embedded { position:fixed !important; left:0 !important; top:0 !important; right:0 !important; bottom:0 !important; width:100vw !important; height:100vh !important; height:100dvh !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
+a-scene#scene canvas, a-scene#scene .a-canvas { position:fixed !important; left:0 !important; top:0 !important; width:100vw !important; height:100vh !important; height:100dvh !important; margin:0 !important; padding:0 !important; z-index:2 !important; }
+video.mindar-video, body > video.mindar-video, video[class*="mindar"] { position:fixed !important; left:0 !important; top:0 !important; right:auto !important; bottom:auto !important; width:100vw !important; height:100vh !important; height:100dvh !important; min-width:100vw !important; min-height:100vh !important; max-width:none !important; max-height:none !important; margin:0 !important; padding:0 !important; border:0 !important; object-fit:cover !important; object-position:center center !important; transform:none !important; z-index:1 !important; display:block !important; }
+.mindar-ui-overlay, .mindar-ui-scanning, .mindar-ui-loading { position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; height:100dvh !important; }
 </style>
 </head>
 <body>
@@ -86,9 +75,42 @@ function setStatus(t,c='#b9f7c2'){status.textContent=t;status.style.color=c}
 function showError(t){setStatus(t,'#ffb0b0');error.textContent=t;error.style.display='block';button.style.display='block';button.disabled=false}
 target.addEventListener('targetFound',()=>{setStatus('Imagem reconhecida! O menu AR está ativo.');hint.style.display='none';menu.classList.add('show'); document.body.classList.add('ar-active')});
 target.addEventListener('targetLost',()=>{setStatus('Imagem perdida. Aponte novamente para o logo.','#fff');menu.classList.remove('show'); document.body.classList.remove('ar-active'); hint.style.display='block'});
-scene.addEventListener('arReady',()=>{setStatus('Câmera ativa — aponte para o logo.');button.style.display='none';hint.style.display='block'});
+scene.addEventListener('arReady',()=>{setStatus('Câmera ativa — aponte para o logo.');button.style.display='none';hint.style.display='block'; forceCameraFullscreen(); setTimeout(forceCameraFullscreen,300); setTimeout(forceCameraFullscreen,1000)});
 scene.addEventListener('arError',e=>showError('Não foi possível iniciar a realidade aumentada. Permita a câmera e use HTTPS.'));
-async function startAR(){button.disabled=true;setStatus('Iniciando câmera…','#fff');try{const sys=scene.systems['mindar-image-system'];if(!sys)throw new Error('MindAR não foi carregado.');await sys.start()}catch(e){console.error(e);showError(e.message||String(e))}}
+function forceCameraFullscreen(){
+  const videos=document.querySelectorAll('video.mindar-video, body > video[class*="mindar"], video[autoplay]');
+  videos.forEach(v=>{
+    v.style.setProperty('position','fixed','important');
+    v.style.setProperty('left','0px','important');
+    v.style.setProperty('top','0px','important');
+    v.style.setProperty('right','auto','important');
+    v.style.setProperty('bottom','auto','important');
+    v.style.setProperty('width',window.innerWidth+'px','important');
+    v.style.setProperty('height',window.innerHeight+'px','important');
+    v.style.setProperty('max-width','none','important');
+    v.style.setProperty('max-height','none','important');
+    v.style.setProperty('margin','0','important');
+    v.style.setProperty('padding','0','important');
+    v.style.setProperty('transform','none','important');
+    v.style.setProperty('object-fit','cover','important');
+    v.style.setProperty('object-position','center center','important');
+  });
+  const canvas=scene.querySelector('canvas');
+  if(canvas){
+    canvas.style.setProperty('position','fixed','important');
+    canvas.style.setProperty('left','0px','important');
+    canvas.style.setProperty('top','0px','important');
+    canvas.style.setProperty('width',window.innerWidth+'px','important');
+    canvas.style.setProperty('height',window.innerHeight+'px','important');
+    canvas.style.setProperty('z-index','2','important');
+  }
+}
+window.addEventListener('resize',forceCameraFullscreen);
+window.addEventListener('orientationchange',()=>setTimeout(forceCameraFullscreen,300));
+const cameraObserver=new MutationObserver(()=>forceCameraFullscreen());
+cameraObserver.observe(document.body,{childList:true,subtree:true});
+
+async function startAR(){button.disabled=true;setStatus('Iniciando câmera…','#fff');try{const sys=scene.systems['mindar-image-system'];if(!sys)throw new Error('MindAR não foi carregado.');await sys.start(); setTimeout(forceCameraFullscreen, 100); setTimeout(forceCameraFullscreen, 500); setTimeout(forceCameraFullscreen, 1500)}catch(e){console.error(e);showError(e.message||String(e))}}
 button.addEventListener('click',startAR);
 document.querySelectorAll('.menuBtn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelector('#modalTitle').textContent=btn.dataset.title;document.querySelector('#modalText').textContent=btn.dataset.text;modal.style.display='flex'}));
 document.querySelector('.close').addEventListener('click',()=>modal.style.display='none');
