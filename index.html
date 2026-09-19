@@ -21,14 +21,34 @@
 .menuCard{position:relative;padding:22px 16px 18px;border-radius:28px;background:linear-gradient(145deg,rgba(5,19,55,.94),rgba(6,46,87,.88));border:1px solid rgba(100,210,255,.42);box-shadow:0 20px 60px rgba(0,0,0,.55),0 0 35px rgba(0,153,255,.18);color:#fff;text-align:center;overflow:hidden}
 .menuCard h2{margin:0;font-size:21px}.menuCard p{margin:6px 0 16px;color:#bcecff;font-size:12px}.menuGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.menuBtn{min-height:72px;border:1px solid rgba(120,215,255,.25);border-radius:16px;background:rgba(255,255,255,.08);color:#fff;font-weight:700;font-size:12px;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.12);transition:.18s}.menuBtn:active{transform:scale(.96);background:rgba(50,170,255,.28)}.menuBtn .ico{display:block;font-size:24px;margin-bottom:5px}.tagline{margin-top:15px;font-size:11px;letter-spacing:2px;color:#ffe08a;text-transform:uppercase}
 #modal{position:fixed;z-index:80;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.68);padding:22px}.modalBox{width:min(92vw,460px);border-radius:22px;background:#071b4d;color:#fff;border:1px solid rgba(120,215,255,.35);padding:24px;box-shadow:0 20px 70px rgba(0,0,0,.6);text-align:center}.modalBox h3{margin:0 0 10px;font-size:21px}.modalBox p{margin:0;color:#ccecff;line-height:1.5;font-size:14px}.close{margin-top:20px;border:0;border-radius:999px;padding:11px 24px;font-weight:800;color:#102b82;background:#fff}
+#screenFix{position:fixed;z-index:32;right:10px;bottom:10px;padding:6px 9px;border-radius:10px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.75);font-size:9px;display:none}
 #error{position:fixed;z-index:90;left:8px;bottom:8px;display:none;max-width:calc(100vw - 16px);padding:8px;border-radius:8px;background:rgba(0,0,0,.75);color:#ffd0d0;font:10px monospace}
 @keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.04);opacity:1}}@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:430px){.menuGrid{gap:7px}.menuBtn{min-height:68px;font-size:11px}.menuCard{padding:18px 12px 15px}.portal{width:190px;height:190px}}
+
+/* CORREÇÃO DE TELA MÓVEL — câmera e cena AR em tela cheia */
+a-scene#scene { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; min-width: 100vw !important; min-height: 100dvh !important; margin: 0 !important; padding: 0 !important; display: block !important; }
+a-scene#scene .a-canvas { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; }
+a-scene#scene video, a-scene#scene .mindar-video, a-scene#scene .mindar-ui-overlay { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; max-width: none !important; max-height: none !important; margin: 0 !important; padding: 0 !important; object-fit: cover !important; }
+body > a-scene#scene { overflow: hidden !important; }
+@supports not (height: 100dvh) { a-scene#scene, a-scene#scene .a-canvas, a-scene#scene video, a-scene#scene .mindar-video { height: 100vh !important; } }
+@media (max-width: 600px) {
+  #arMenu { width: min(92vw, 560px); top: 56%; }
+  .menuCard { padding: 24px 18px 20px; border-radius: 26px; }
+  .menuCard h2 { font-size: clamp(19px, 5vw, 25px); }
+  .menuCard p { font-size: 13px; margin-bottom: 18px; }
+  .menuGrid { gap: 10px; }
+  .menuBtn { min-height: 86px; font-size: 12px; border-radius: 18px; }
+  .menuBtn .ico { font-size: 28px; margin-bottom: 6px; }
+  .tagline { font-size: 10px; letter-spacing: 1.5px; }
+  .portal { width: min(58vw, 300px); height: min(58vw, 300px); }
+}
+@media (orientation: landscape) and (max-height: 600px) { #arMenu { top: 56%; width: min(80vw, 700px); } .menuCard { padding: 12px 16px; } .menuBtn { min-height: 62px; } .menuBtn .ico { font-size: 20px; } }
 </style>
 </head>
 <body>
 <div class="topbar"><strong>Realidade Aumentada — Escola Municipal</strong><span id="status">Toque em “INICIAR CÂMERA” e aponte para a imagem-alvo.</span></div>
-<div id="hint">Mantenha o logo/imagem inteira na câmera por alguns segundos.</div>
+<div id="hint">Mantenha o logo/imagem inteira na câmera por alguns segundos.</div><div id="screenFix">📱 Modo AR em tela cheia</div>
 <button id="startButton">📷 INICIAR CÂMERA</button>
 <div id="arMenu">
   <div class="portal"></div>
@@ -52,7 +72,7 @@
   <a-assets><img id="logo" src="./assets/logo.png" crossorigin="anonymous"></a-assets>
   <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
   <a-entity id="target" mindar-image-target="targetIndex: 0">
-    <a-plane id="logoPlane" src="#logo" position="0 0.32 0.18" width="0.56" height="0.56" rotation="90 0 0" material="transparent: true; alphaTest: 0.05; side: double" animation__in="property: scale; from: 0.7 0.7 0.7; to: 1 1 1; dur: 700; easing: easeOutElastic"></a-plane>
+    <a-plane id="logoPlane" src="#logo" position="0 0.34 0.20" width="0.78" height="0.78" rotation="90 0 0" material="transparent: true; alphaTest: 0.05; side: double" animation__in="property: scale; from: 0.7 0.7 0.7; to: 1 1 1; dur: 700; easing: easeOutElastic"></a-plane>
     <a-torus position="0 0.32 0.12" rotation="90 0 0" radius="0.39" radius-tubular="0.012" material="color:#26a9ff; emissive:#0878d1; emissiveIntensity:2; transparent:true; opacity:.8" animation="property: rotation; to: 90 360 0; dur:7000; easing:linear; loop:true"></a-torus>
     <a-torus position="0 0.32 0.13" rotation="90 0 0" radius="0.45" radius-tubular="0.006" material="color:#ffd35a; emissive:#b97900; emissiveIntensity:1.5; transparent:true; opacity:.75" animation="property:rotation; to:90 -360 0; dur:10000; easing:linear; loop:true"></a-torus>
     <a-ring position="0 0.32 0.10" rotation="90 0 0" radius-inner="0.43" radius-outer="0.445" material="color:#ffffff; transparent:true; opacity:.5" animation="property:scale; from:1 1 1; to:1.12 1.12 1.12; dur:1400; dir:alternate; loop:true"></a-ring>
@@ -64,8 +84,8 @@
 const scene=document.querySelector('#scene'), target=document.querySelector('#target'), button=document.querySelector('#startButton'), status=document.querySelector('#status'), hint=document.querySelector('#hint'), menu=document.querySelector('#arMenu'), error=document.querySelector('#error'), modal=document.querySelector('#modal');
 function setStatus(t,c='#b9f7c2'){status.textContent=t;status.style.color=c}
 function showError(t){setStatus(t,'#ffb0b0');error.textContent=t;error.style.display='block';button.style.display='block';button.disabled=false}
-target.addEventListener('targetFound',()=>{setStatus('Imagem reconhecida! Explore o logo.');hint.style.display='none';menu.classList.add('show')});
-target.addEventListener('targetLost',()=>{setStatus('Imagem perdida. Aponte novamente para o logo.','#fff');menu.classList.remove('show');hint.style.display='block'});
+target.addEventListener('targetFound',()=>{setStatus('Imagem reconhecida! O menu AR está ativo.');hint.style.display='none';menu.classList.add('show'); document.body.classList.add('ar-active')});
+target.addEventListener('targetLost',()=>{setStatus('Imagem perdida. Aponte novamente para o logo.','#fff');menu.classList.remove('show'); document.body.classList.remove('ar-active'); hint.style.display='block'});
 scene.addEventListener('arReady',()=>{setStatus('Câmera ativa — aponte para o logo.');button.style.display='none';hint.style.display='block'});
 scene.addEventListener('arError',e=>showError('Não foi possível iniciar a realidade aumentada. Permita a câmera e use HTTPS.'));
 async function startAR(){button.disabled=true;setStatus('Iniciando câmera…','#fff');try{const sys=scene.systems['mindar-image-system'];if(!sys)throw new Error('MindAR não foi carregado.');await sys.start()}catch(e){console.error(e);showError(e.message||String(e))}}
