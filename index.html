@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Brasão em realidade aumentada — E. M. Dr. Raymundo Nonato de Magalhães Cordeiro</title>
+<meta name="description" content="Aponte a câmera para o brasão impresso e veja o selo da escola se levantar do papel.">
+<link rel="icon" href="logo-3d.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&family=Archivo:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --tinta:#151a3d;
+    --azul:#272c86;
+    --azul-claro:#5b62c8;
+    --ouro:#c9a24b;
+    --verde:#2c9e3f;
+    --papel:#f6f4ec;
+    --papel-sombra:rgba(21,26,61,.22);
+    box-sizing:border-box;
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html,body{height:100%;margin:0}
+  body{
+    background:var(--tinta);
+    color:var(--papel);
+    font-family:Archivo,system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+
+  /* ---------- capa ---------- */
+  #capa{
+    position:fixed;inset:0;z-index:30;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:2rem;
+    padding:calc(2rem + env(safe-area-inset-top,0px)) 1.5rem calc(2rem + env(safe-area-inset-bottom,0px));
+    text-align:center;
+    background:
+      radial-gradient(120% 90% at 50% 0%, #2b3183 0%, #1b2054 45%, #10142f 100%);
+  }
+  #capa::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size:3px 3px;mix-blend-mode:overlay;
+  }
+  .selo{
+    width:min(46vw,190px);aspect-ratio:1;
+    background:url(logo-3d.png) center/contain no-repeat;
+    filter:drop-shadow(0 18px 22px rgba(0,0,0,.55));
+    transform:perspective(700px) rotateX(52deg);
+    animation:levanta 4.2s 500ms cubic-bezier(.22,1,.3,1) forwards;
+  }
+  @keyframes levanta{
+    0%{transform:perspective(700px) rotateX(74deg) translateY(26px);filter:drop-shadow(0 4px 6px rgba(0,0,0,.7))}
+    55%{transform:perspective(700px) rotateX(0deg) translateY(-6px)}
+    100%{transform:perspective(700px) rotateX(0deg) rotateY(360deg)}
+  }
+  h1{
+    font-family:Newsreader,Georgia,serif;
+    font-weight:300;font-size:clamp(1.9rem,7vw,3.1rem);
+    line-height:1.08;letter-spacing:-.015em;margin:0;
+    max-width:14ch;
+  }
+  .escola{
+    font-family:Newsreader,Georgia,serif;font-size:.95rem;font-weight:500;
+    letter-spacing:.14em;color:var(--ouro);margin:0 0 -1rem;max-width:26ch;line-height:1.5;
+  }
+  p.lead{
+    margin:0;max-width:34ch;font-size:1rem;line-height:1.55;
+    color:rgba(246,244,236,.72);
+  }
+  .acoes{display:flex;flex-direction:column;align-items:center;gap:1rem;z-index:1}
+  button.principal{
+    font:600 1.05rem/1 Archivo,sans-serif;color:var(--tinta);
+    background:var(--ouro);border:0;border-radius:999px;
+    padding:1.05rem 2.4rem;cursor:pointer;
+    box-shadow:0 10px 24px rgba(201,162,75,.28);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  button.principal:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(201,162,75,.36)}
+  button.principal:active{transform:translateY(0)}
+  a.secundaria{
+    color:rgba(246,244,236,.8);font-size:.92rem;
+    text-decoration:none;border-bottom:1px solid rgba(201,162,75,.6);padding-bottom:2px;
+  }
+  a.secundaria:hover{color:#fff}
+  :focus-visible{outline:2px solid var(--ouro);outline-offset:4px;border-radius:4px}
+  .aviso{
+    font-size:.82rem;color:rgba(246,244,236,.5);max-width:32ch;margin:0;line-height:1.5;
+  }
+
+  /* ---------- HUD sobre a câmera ---------- */
+  #hud{
+    position:fixed;left:0;right:0;z-index:20;pointer-events:none;
+    display:none;
+  }
+  #hud.ativo{display:block}
+  #faixa{
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:calc(1.4rem + env(safe-area-inset-bottom,0px));
+    display:flex;align-items:center;gap:.6rem;
+    background:rgba(16,20,47,.78);backdrop-filter:blur(8px);
+    border:1px solid rgba(201,162,75,.35);border-radius:999px;
+    padding:.7rem 1.15rem;font-size:.88rem;white-space:nowrap;
+    max-width:calc(100vw - 2rem);
+  }
+  #ponto{width:9px;height:9px;border-radius:50%;background:var(--ouro);flex:none;
+    box-shadow:0 0 0 0 rgba(201,162,75,.6);animation:pulsa 1.8s infinite}
+  #hud.encontrado #ponto{background:var(--verde);animation:none}
+  @keyframes pulsa{70%{box-shadow:0 0 0 9px rgba(201,162,75,0)}100%{box-shadow:0 0 0 0 rgba(201,162,75,0)}}
+  #sair{
+    pointer-events:auto;position:fixed;
+    top:calc(.9rem + env(safe-area-inset-top,0px));right:.9rem;
+    background:rgba(16,20,47,.72);color:var(--papel);
+    border:1px solid rgba(255,255,255,.18);border-radius:999px;
+    padding:.5rem .95rem;font:600 .82rem/1 Archivo,sans-serif;cursor:pointer;
+  }
+  .a-enter-vr,.a-enter-ar,.a-orientation-modal{display:none!important}
+  @media (prefers-reduced-motion:reduce){.selo{animation-duration:1ms;animation-delay:0ms}#ponto{animation:none}}
+</style>
+</head>
+<body>
+
+<main id="capa">
+  <div class="selo" aria-hidden="true"></div>
+  <p class="escola">Escola Municipal Dr. Raymundo Nonato de Magalhães Cordeiro</p>
+  <h1>O brasão sai do papel</h1>
+  <p class="lead">Imprima o marcador, coloque-o sobre a mesa e aponte a câmera. O selo se levanta devagar e fica girando sobre a folha.</p>
+  <div class="acoes">
+    <button class="principal" id="ligar">Ligar a câmera</button>
+    <a class="secundaria" href="marcador.png" download="marcador-brasao.png">Baixar o marcador para imprimir</a>
+    <p class="aviso">Funciona no celular ou no computador, em páginas https. A imagem da câmera não sai do seu aparelho.</p>
+  </div>
+</main>
+
+<div id="hud">
+  <button id="sair">Voltar</button>
+  <div id="faixa"><span id="ponto"></span><span id="texto">Aponte para o brasão impresso</span></div>
+</div>
+
+<template id="cena">
+<a-scene
+  embedded
+  vr-mode-ui="enabled: false"
+  loading-screen="enabled: false"
+  renderer="antialias: true; alpha: true; colorManagement: true; physicallyCorrectLights: true"
+  arjs="sourceType: webcam; detectionMode: mono; patternRatio: 0.5; maxDetectionRate: 60; debugUIEnabled: false;">
+
+  <a-assets>
+    <img id="brasao" src="logo-3d.png" crossorigin="anonymous">
+  </a-assets>
+
+  <a-marker id="alvo" type="pattern" url="marcador.patt"
+            smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4">
+
+    <!-- sombra projetada na folha -->
+    <a-circle class="cantclick" radius="0.52" rotation="-90 0 0" position="0 0.005 0"
+              material="color: #101430; opacity: 0.22; transparent: true; shader: flat"
+              animation__sombra="property: scale; from: 1 1 1; to: 0.62 0.62 0.62; dur: 3000; easing: easeInOutQuad; startEvents: subir"></a-circle>
+
+    <!-- anéis dourados girando rente ao papel -->
+    <a-ring radius-inner="0.60" radius-outer="0.63" rotation="-90 0 0" position="0 0.006 0"
+            material="color: #c9a24b; opacity: 0.85; transparent: true; shader: flat; side: double"
+            animation__gira="property: rotation; to: -90 0 360; dur: 14000; loop: true; easing: linear"></a-ring>
+    <a-ring radius-inner="0.72" radius-outer="0.735" rotation="-90 0 0" position="0 0.006 0"
+            material="color: #5b62c8; opacity: 0.6; transparent: true; shader: flat; side: double"
+            animation__gira2="property: rotation; to: -90 0 -360; dur: 22000; loop: true; easing: linear"></a-ring>
+
+    <!-- sobe e endireita -->
+    <a-entity id="subir"
+      position="0 0.02 0" rotation="-90 0 0"
+      animation__sobe="property: position; to: 0 0.78 0; dur: 3000; easing: easeInOutQuad; startEvents: subir"
+      animation__pe="property: rotation; to: 0 0 0; dur: 3000; easing: easeInOutQuad; startEvents: subir">
+
+      <!-- gira em pé e flutua -->
+      <a-entity id="girar"
+        animation__rodopio="property: rotation; from: 0 0 0; to: 0 360 0; dur: 9000; loop: true; easing: linear; startEvents: rodar"
+        animation__flutua="property: position; from: 0 0 0; to: 0 0.07 0; dur: 2600; dir: alternate; loop: true; easing: easeInOutSine; startEvents: rodar">
+
+        <a-image src="#brasao" width="1.15" height="1.15"
+                 material="transparent: true; alphaTest: 0.04; side: double; shader: flat"></a-image>
+      </a-entity>
+    </a-entity>
+  </a-marker>
+
+  <a-entity light="type: ambient; intensity: 0.95"></a-entity>
+  <a-entity light="type: directional; intensity: 0.5" position="1 2 1"></a-entity>
+  <a-entity camera></a-entity>
+</a-scene>
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/aframe@1.5.0/dist/aframe-master.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+<script>
+(function () {
+  var capa = document.getElementById('capa');
+  var hud = document.getElementById('hud');
+  var texto = document.getElementById('texto');
+  var montada = false;
+
+  function falha(msg) {
+    texto.textContent = msg;
+    hud.classList.remove('encontrado');
+  }
+
+  function iniciar() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert('Este navegador não abre a câmera. Tente o Chrome ou o Safari atualizados.');
+      return;
+    }
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+      alert('A câmera só funciona em endereço https. Publique a página no GitHub Pages e acesse pelo link https.');
+      return;
+    }
+
+    capa.style.display = 'none';
+    hud.classList.add('ativo');
+
+    if (!montada) {
+      montada = true;
+      document.body.appendChild(document.getElementById('cena').content.cloneNode(true));
+      var alvo = document.getElementById('alvo');
+      var subir = document.getElementById('subir');
+      var girar = document.getElementById('girar');
+      var tocando = false;
+
+      alvo.addEventListener('markerFound', function () {
+        hud.classList.add('encontrado');
+        texto.textContent = 'Brasão encontrado';
+        if (tocando) return;
+        tocando = true;
+        subir.setAttribute('position', '0 0.02 0');
+        subir.setAttribute('rotation', '-90 0 0');
+        girar.setAttribute('rotation', '0 0 0');
+        girar.setAttribute('position', '0 0 0');
+        subir.emit('subir');
+        document.querySelectorAll('[animation__sombra]').forEach(function (el) { el.emit('subir'); });
+        setTimeout(function () { girar.emit('rodar'); }, 3000);
+      });
+
+      alvo.addEventListener('markerLost', function () {
+        hud.classList.remove('encontrado');
+        texto.textContent = 'Aponte para o brasão impresso';
+        tocando = false;
+      });
+
+      window.addEventListener('camera-error', function () {
+        falha('Não consegui abrir a câmera. Verifique a permissão do navegador.');
+      });
+    }
+  }
+
+  document.getElementById('ligar').addEventListener('click', iniciar);
+  document.getElementById('sair').addEventListener('click', function () {
+    hud.classList.remove('ativo');
+    capa.style.display = 'flex';
+  });
+})();
+</script>
+</body>
+</html>
