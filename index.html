@@ -1,120 +1,148 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#071b4d">
-<title>Realidade Aumentada — E.M. Dr. Raymundo Nonato de Magalhães Cordeiro</title>
-<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-<style>
-*{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif}
-#scene{position:fixed;inset:0;width:100%;height:100%}
-.topbar{position:fixed;z-index:30;left:50%;top:max(12px,env(safe-area-inset-top));transform:translateX(-50%);width:min(92vw,620px);padding:12px 16px;border-radius:18px;background:rgba(4,12,35,.78);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);color:#fff;text-align:center;box-shadow:0 10px 35px rgba(0,0,0,.35)}
-.topbar strong{display:block;font-size:16px}.topbar span{display:block;margin-top:5px;font-size:12px;color:#b9f7c2}
-#startButton{position:fixed;z-index:40;left:50%;bottom:max(26px,env(safe-area-inset-bottom));transform:translateX(-50%);border:0;border-radius:999px;padding:16px 28px;font-size:16px;font-weight:800;background:#fff;color:#172f8f;box-shadow:0 10px 30px rgba(0,0,0,.45)}
-#hint{position:fixed;z-index:31;left:50%;bottom:96px;transform:translateX(-50%);width:min(90vw,520px);padding:9px 13px;border-radius:12px;background:rgba(0,0,0,.62);color:#fff;text-align:center;font-size:12px;display:none}
-#arMenu{position:fixed;z-index:50;left:50%;top:50%;transform:translate(-50%,-50%) scale(.92);width:min(94vw,520px);display:none;opacity:0;transition:.5s ease;pointer-events:none}
-#arMenu.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
-.portal{position:absolute;inset:50% auto auto 50%;width:220px;height:220px;transform:translate(-50%,-50%);border:2px solid rgba(70,190,255,.55);border-radius:50%;box-shadow:0 0 18px #168bff,0 0 60px rgba(0,160,255,.35);animation:pulse 2.4s ease-in-out infinite;pointer-events:none}
-.portal:before,.portal:after{content:"";position:absolute;inset:18px;border:1px solid rgba(255,215,90,.65);border-radius:50%;animation:spin 8s linear infinite}.portal:after{inset:-8px;border-style:dashed;border-color:rgba(255,255,255,.45);animation:spin 13s linear reverse infinite}
-.menuCard{position:relative;padding:22px 16px 18px;border-radius:28px;background:linear-gradient(145deg,rgba(5,19,55,.94),rgba(6,46,87,.88));border:1px solid rgba(100,210,255,.42);box-shadow:0 20px 60px rgba(0,0,0,.55),0 0 35px rgba(0,153,255,.18);color:#fff;text-align:center;overflow:hidden}
-.menuCard h2{margin:0;font-size:21px}.menuCard p{margin:6px 0 16px;color:#bcecff;font-size:12px}.menuGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.menuBtn{min-height:72px;border:1px solid rgba(120,215,255,.25);border-radius:16px;background:rgba(255,255,255,.08);color:#fff;font-weight:700;font-size:12px;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.12);transition:.18s}.menuBtn:active{transform:scale(.96);background:rgba(50,170,255,.28)}.menuBtn .ico{display:block;font-size:24px;margin-bottom:5px}.tagline{margin-top:15px;font-size:11px;letter-spacing:2px;color:#ffe08a;text-transform:uppercase}
-#modal{position:fixed;z-index:80;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.68);padding:22px}.modalBox{width:min(92vw,460px);border-radius:22px;background:#071b4d;color:#fff;border:1px solid rgba(120,215,255,.35);padding:24px;box-shadow:0 20px 70px rgba(0,0,0,.6);text-align:center}.modalBox h3{margin:0 0 10px;font-size:21px}.modalBox p{margin:0;color:#ccecff;line-height:1.5;font-size:14px}.close{margin-top:20px;border:0;border-radius:999px;padding:11px 24px;font-weight:800;color:#102b82;background:#fff}
-#screenFix{position:fixed;z-index:32;right:10px;bottom:10px;padding:6px 9px;border-radius:10px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.75);font-size:9px;display:none}
-#error{position:fixed;z-index:90;left:8px;bottom:8px;display:none;max-width:calc(100vw - 16px);padding:8px;border-radius:8px;background:rgba(0,0,0,.75);color:#ffd0d0;font:10px monospace}
-@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.04);opacity:1}}@keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:430px){.menuGrid{gap:7px}.menuBtn{min-height:68px;font-size:11px}.menuCard{padding:18px 12px 15px}.portal{width:190px;height:190px}}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071b4d">
+  <title>Realidade Aumentada — Escola Municipal</title>
 
-/* V8 — correção definitiva do vídeo MindAR em celulares */
-html, body { width:100% !important; height:100% !important; margin:0 !important; padding:0 !important; overflow:hidden !important; background:#000 !important; }
-body { position:fixed !important; inset:0 !important; }
-a-scene#scene, a-scene#scene.embedded { position:fixed !important; left:0 !important; top:0 !important; right:0 !important; bottom:0 !important; width:100vw !important; height:100vh !important; height:100dvh !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
-a-scene#scene canvas, a-scene#scene .a-canvas { position:fixed !important; left:0 !important; top:0 !important; width:100vw !important; height:100vh !important; height:100dvh !important; margin:0 !important; padding:0 !important; z-index:2 !important; }
-video.mindar-video, body > video.mindar-video, video[class*="mindar"] { position:fixed !important; left:0 !important; top:0 !important; right:auto !important; bottom:auto !important; width:100vw !important; height:100vh !important; height:100dvh !important; min-width:100vw !important; min-height:100vh !important; max-width:none !important; max-height:none !important; margin:0 !important; padding:0 !important; border:0 !important; object-fit:cover !important; object-position:center center !important; transform:none !important; z-index:1 !important; display:block !important; }
-.mindar-ui-overlay, .mindar-ui-scanning, .mindar-ui-loading { position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; height:100dvh !important; }
-</style>
+  <!-- Versões atuais recomendadas pelo exemplo oficial do MindAR -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif}
+    #scene{width:100%;height:100%}
+    .ui{
+      position:fixed;z-index:20;left:50%;top:14px;transform:translateX(-50%);
+      width:min(94vw,560px);padding:12px 16px;border-radius:16px;
+      background:rgba(4,12,35,.78);color:#fff;text-align:center;
+      border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);
+      box-shadow:0 8px 30px rgba(0,0,0,.35)
+    }
+    .ui strong{display:block;font-size:17px;line-height:1.2}
+    #status{display:block;margin-top:6px;font-size:13px;color:#b9f7c2;line-height:1.35}
+    #startButton{
+      position:fixed;z-index:30;left:50%;bottom:28px;transform:translateX(-50%);
+      border:0;border-radius:999px;padding:15px 28px;font-size:16px;
+      font-weight:700;background:#fff;color:#142b86;
+      box-shadow:0 8px 28px rgba(0,0,0,.42);cursor:pointer
+    }
+    #startButton:active{transform:translateX(-50%) scale(.97)}
+    #help{
+      position:fixed;z-index:25;left:50%;bottom:88px;transform:translateX(-50%);
+      width:min(92vw,520px);padding:10px 14px;border-radius:12px;
+      background:rgba(0,0,0,.65);color:#fff;text-align:center;font-size:12px;line-height:1.35;
+      display:none
+    }
+    #debug{position:fixed;z-index:40;left:8px;bottom:8px;max-width:calc(100vw - 16px);padding:7px 9px;border-radius:8px;background:rgba(0,0,0,.72);color:#ddd;font:10px monospace;display:none}
+  </style>
 </head>
 <body>
-<div class="topbar"><strong>Realidade Aumentada — Escola Municipal</strong><span id="status">Toque em “INICIAR CÂMERA” e aponte para a imagem-alvo.</span></div>
-<div id="hint">Mantenha o logo/imagem inteira na câmera por alguns segundos.</div><div id="screenFix">📱 Modo AR em tela cheia</div>
-<button id="startButton">📷 INICIAR CÂMERA</button>
-<div id="arMenu">
-  <div class="portal"></div>
-  <div class="menuCard">
-    <h2>✨ Escola em Realidade Aumentada</h2>
-    <p>Explore a escola através do logo.</p>
-    <div class="menuGrid">
-      <button class="menuBtn" data-title="Conheça a Escola" data-text="Área para apresentar a escola, seus espaços e sua proposta educativa."><span class="ico">🏫</span>Conheça a Escola</button>
-      <button class="menuBtn" data-title="Projetos" data-text="Área para apresentar projetos, feiras, experiências e produções dos estudantes."><span class="ico">📚</span>Projetos</button>
-      <button class="menuBtn" data-title="Nossa História" data-text="Área para apresentar a história da escola e seus principais momentos."><span class="ico">🕰️</span>Nossa História</button>
-      <button class="menuBtn" data-title="Vídeos" data-text="Área para acessar vídeos institucionais, projetos e apresentações."><span class="ico">🎬</span>Vídeos</button>
-      <button class="menuBtn" data-title="Galeria" data-text="Área para reunir fotos de atividades, eventos e projetos da escola."><span class="ico">🖼️</span>Galeria</button>
-      <button class="menuBtn" data-title="Contato" data-text="Área para inserir os canais oficiais de contato da escola."><span class="ico">✉️</span>Contato</button>
-    </div>
-    <div class="tagline">Educação • Ciência • Tecnologia • Amazônia</div>
+  <div class="ui">
+    <strong>Realidade Aumentada — Escola Municipal</strong>
+    <span id="status">Toque em “INICIAR CÂMERA” e depois aponte para a imagem-alvo.</span>
   </div>
-</div>
-<div id="modal"><div class="modalBox"><h3 id="modalTitle"></h3><p id="modalText"></p><button class="close">FECHAR</button></div></div>
-<div id="error"></div>
-<a-scene id="scene" mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 8; warmupTolerance: 5; uiLoading: no; uiScanning: no; uiError: no;" color-space="sRGB" renderer="colorManagement: true; physicallyCorrectLights: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" embedded>
-  <a-assets><img id="logo" src="./assets/logo.png" crossorigin="anonymous"></a-assets>
-  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-  <a-entity id="target" mindar-image-target="targetIndex: 0">
-    <a-plane id="logoPlane" src="#logo" position="0 0.34 0.20" width="0.78" height="0.78" rotation="90 0 0" material="transparent: true; alphaTest: 0.05; side: double" animation__in="property: scale; from: 0.7 0.7 0.7; to: 1 1 1; dur: 700; easing: easeOutElastic"></a-plane>
-    <a-torus position="0 0.32 0.12" rotation="90 0 0" radius="0.39" radius-tubular="0.012" material="color:#26a9ff; emissive:#0878d1; emissiveIntensity:2; transparent:true; opacity:.8" animation="property: rotation; to: 90 360 0; dur:7000; easing:linear; loop:true"></a-torus>
-    <a-torus position="0 0.32 0.13" rotation="90 0 0" radius="0.45" radius-tubular="0.006" material="color:#ffd35a; emissive:#b97900; emissiveIntensity:1.5; transparent:true; opacity:.75" animation="property:rotation; to:90 -360 0; dur:10000; easing:linear; loop:true"></a-torus>
-    <a-ring position="0 0.32 0.10" rotation="90 0 0" radius-inner="0.43" radius-outer="0.445" material="color:#ffffff; transparent:true; opacity:.5" animation="property:scale; from:1 1 1; to:1.12 1.12 1.12; dur:1400; dir:alternate; loop:true"></a-ring>
-    <a-sphere position="-0.52 0.55 0.12" radius="0.018" material="color:#ffd35a; emissive:#ffd35a; emissiveIntensity:3" animation="property:position; from:-0.52 0.35 0.12; to:-0.52 0.7 0.12; dur:1600; dir:alternate; loop:true"></a-sphere>
-    <a-sphere position="0.52 0.45 0.12" radius="0.014" material="color:#3cc8ff; emissive:#3cc8ff; emissiveIntensity:3" animation="property:position; from:0.52 0.7 0.12; to:0.52 0.3 0.12; dur:1800; dir:alternate; loop:true"></a-sphere>
-  </a-entity>
-</a-scene>
-<script>
-const scene=document.querySelector('#scene'), target=document.querySelector('#target'), button=document.querySelector('#startButton'), status=document.querySelector('#status'), hint=document.querySelector('#hint'), menu=document.querySelector('#arMenu'), error=document.querySelector('#error'), modal=document.querySelector('#modal');
-function setStatus(t,c='#b9f7c2'){status.textContent=t;status.style.color=c}
-function showError(t){setStatus(t,'#ffb0b0');error.textContent=t;error.style.display='block';button.style.display='block';button.disabled=false}
-target.addEventListener('targetFound',()=>{setStatus('Imagem reconhecida! O menu AR está ativo.');hint.style.display='none';menu.classList.add('show'); document.body.classList.add('ar-active')});
-target.addEventListener('targetLost',()=>{setStatus('Imagem perdida. Aponte novamente para o logo.','#fff');menu.classList.remove('show'); document.body.classList.remove('ar-active'); hint.style.display='block'});
-scene.addEventListener('arReady',()=>{setStatus('Câmera ativa — aponte para o logo.');button.style.display='none';hint.style.display='block'; forceCameraFullscreen(); setTimeout(forceCameraFullscreen,300); setTimeout(forceCameraFullscreen,1000)});
-scene.addEventListener('arError',e=>showError('Não foi possível iniciar a realidade aumentada. Permita a câmera e use HTTPS.'));
-function forceCameraFullscreen(){
-  const videos=document.querySelectorAll('video.mindar-video, body > video[class*="mindar"], video[autoplay]');
-  videos.forEach(v=>{
-    v.style.setProperty('position','fixed','important');
-    v.style.setProperty('left','0px','important');
-    v.style.setProperty('top','0px','important');
-    v.style.setProperty('right','auto','important');
-    v.style.setProperty('bottom','auto','important');
-    v.style.setProperty('width',window.innerWidth+'px','important');
-    v.style.setProperty('height',window.innerHeight+'px','important');
-    v.style.setProperty('max-width','none','important');
-    v.style.setProperty('max-height','none','important');
-    v.style.setProperty('margin','0','important');
-    v.style.setProperty('padding','0','important');
-    v.style.setProperty('transform','none','important');
-    v.style.setProperty('object-fit','cover','important');
-    v.style.setProperty('object-position','center center','important');
-  });
-  const canvas=scene.querySelector('canvas');
-  if(canvas){
-    canvas.style.setProperty('position','fixed','important');
-    canvas.style.setProperty('left','0px','important');
-    canvas.style.setProperty('top','0px','important');
-    canvas.style.setProperty('width',window.innerWidth+'px','important');
-    canvas.style.setProperty('height',window.innerHeight+'px','important');
-    canvas.style.setProperty('z-index','2','important');
-  }
-}
-window.addEventListener('resize',forceCameraFullscreen);
-window.addEventListener('orientationchange',()=>setTimeout(forceCameraFullscreen,300));
-const cameraObserver=new MutationObserver(()=>forceCameraFullscreen());
-cameraObserver.observe(document.body,{childList:true,subtree:true});
 
-async function startAR(){button.disabled=true;setStatus('Iniciando câmera…','#fff');try{const sys=scene.systems['mindar-image-system'];if(!sys)throw new Error('MindAR não foi carregado.');await sys.start(); setTimeout(forceCameraFullscreen, 100); setTimeout(forceCameraFullscreen, 500); setTimeout(forceCameraFullscreen, 1500)}catch(e){console.error(e);showError(e.message||String(e))}}
-button.addEventListener('click',startAR);
-document.querySelectorAll('.menuBtn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelector('#modalTitle').textContent=btn.dataset.title;document.querySelector('#modalText').textContent=btn.dataset.text;modal.style.display='flex'}));
-document.querySelector('.close').addEventListener('click',()=>modal.style.display='none');
-modal.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none'});
-</script>
+  <div id="help">Dica: mantenha a imagem-alvo inteira dentro da câmera, com boa iluminação e sem reflexos.</div>
+  <button id="startButton">📷 INICIAR CÂMERA</button>
+  <div id="debug"></div>
+
+  <a-scene
+    id="scene"
+    mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 8; warmupTolerance: 5; uiLoading: no; uiScanning: no; uiError: no;"
+    color-space="sRGB"
+    renderer="colorManagement: true; physicallyCorrectLights: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    embedded>
+
+    <a-assets>
+      <img id="logo" src="./assets/logo.png" crossorigin="anonymous">
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <a-entity id="target" mindar-image-target="targetIndex: 0">
+      <!-- Plano inicialmente vertical; a animação gira no eixo Y. -->
+      <a-plane
+        id="logoPlane"
+        src="#logo"
+        position="0 0.30 0.18"
+        width="0.62"
+        height="0.615"
+        rotation="0 90 0"
+        material="transparent: true; alphaTest: 0.05; side: double"
+        animation__spin="property: rotation; from: 0 90 0; to: 0 450 0; dur: 2800; easing: linear; loop: true">
+      </a-plane>
+    </a-entity>
+  </a-scene>
+
+  <script>
+    const scene = document.querySelector('#scene');
+    const target = document.querySelector('#target');
+    const plane = document.querySelector('#logoPlane');
+    const status = document.querySelector('#status');
+    const button = document.querySelector('#startButton');
+    const help = document.querySelector('#help');
+    const debug = document.querySelector('#debug');
+
+    function setStatus(text, color) {
+      status.textContent = text;
+      status.style.color = color || '#b9f7c2';
+    }
+
+    function showError(message) {
+      setStatus(message, '#ff9b9b');
+      help.style.display = 'block';
+      button.style.display = 'block';
+    }
+
+    target.addEventListener('targetFound', () => {
+      setStatus('Imagem reconhecida! O logo está girando no eixo X.');
+      help.style.display = 'none';
+    });
+
+    target.addEventListener('targetLost', () => {
+      setStatus('Imagem perdida. Aponte novamente para a imagem-alvo.', '#fff');
+      help.style.display = 'block';
+    });
+
+    scene.addEventListener('arReady', () => {
+      setStatus('Câmera ativa — aponte para a imagem-alvo.');
+      button.style.display = 'none';
+      help.style.display = 'block';
+    });
+
+    scene.addEventListener('arError', (event) => {
+      console.error('MindAR arError:', event.detail || event);
+      showError('O navegador/dispositivo não conseguiu iniciar a realidade aumentada. Use Chrome no Android ou Safari no iPhone e permita a câmera.');
+      debug.textContent = 'arError: ' + JSON.stringify(event.detail || {});
+      debug.style.display = 'block';
+    });
+
+    scene.addEventListener('loaded', () => {
+      console.log('A-Frame carregado. MindAR 1.2.5.');
+    });
+
+    async function startAR() {
+      button.disabled = true;
+      setStatus('Iniciando câmera…', '#fff');
+      try {
+        const arSystem = scene.systems['mindar-image-system'];
+        if (!arSystem) throw new Error('Sistema MindAR não foi carregado.');
+        await arSystem.start();
+      } catch (error) {
+        console.error(error);
+        button.disabled = false;
+        showError('Não foi possível iniciar a câmera. Verifique a permissão da câmera e use HTTPS.');
+        debug.textContent = 'Erro: ' + (error && error.message ? error.message : error);
+        debug.style.display = 'block';
+      }
+    }
+
+    button.addEventListener('click', startAR);
+  </script>
 </body>
 </html>
