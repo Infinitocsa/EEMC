@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Livro Interativo — Realidade Aumentada</title>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101114; font-family: Arial, sans-serif; }
+    #status {
+      position: fixed; z-index: 5; top: 14px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 28px); max-width: 520px; padding: 12px 15px;
+      color: #fff; text-align: center; background: rgba(0,0,0,.72);
+      border: 1px solid rgba(255,255,255,.22); border-radius: 12px; font-size: 14px;
+    }
+    #sound {
+      display: none; position: fixed; z-index: 6; bottom: 24px; left: 50%; transform: translateX(-50%);
+      padding: 13px 20px; border: 0; border-radius: 999px; color: #171717;
+      background: #fff; font-size: 15px; font-weight: 700;
+    }
+    #sound.show { display: block; }
+    #fallback { color: white; padding: 24px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="status">Carregando experiência de realidade aumentada…</div>
+  <button id="sound" type="button">Ativar som do vídeo</button>
+
+  <video id="ar-video" src="./assets/video.mp4" preload="auto" playsinline webkit-playsinline muted loop crossorigin="anonymous" style="display:none"></video>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-assets>
+      <video id="videoTexture" src="./assets/video.mp4" preload="auto" playsinline webkit-playsinline muted loop crossorigin="anonymous"></video>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- O plano tem a proporção da imagem impressa (542 x 315).
+         O vídeo 16:9 é ajustado ao plano para cobrir a imagem. -->
+    <a-entity mindar-image-target="targetIndex: 0" id="imageTarget">
+      <a-video
+        src="#videoTexture"
+        width="1"
+        height="0.58118"
+        position="0 0 0"
+        rotation="0 0 0">
+      </a-video>
+    </a-entity>
+  </a-scene>
+
+  <script>
+    const statusBox = document.getElementById('status');
+    const soundButton = document.getElementById('sound');
+    const video = document.getElementById('videoTexture');
+    const target = document.getElementById('imageTarget');
+    let found = false;
+
+    target.addEventListener('targetFound', async () => {
+      found = true;
+      statusBox.textContent = 'Imagem reconhecida! O vídeo está aparecendo sobre a página.';
+      soundButton.classList.add('show');
+      try { await video.play(); } catch (e) {
+        statusBox.textContent = 'Imagem reconhecida. Toque em “Ativar som do vídeo” para iniciar.';
+      }
+    });
+
+    target.addEventListener('targetLost', () => {
+      found = false;
+      video.pause();
+      soundButton.classList.remove('show');
+      statusBox.textContent = 'Aponte a câmera para a imagem impressa.';
+    });
+
+    soundButton.addEventListener('click', async () => {
+      video.muted = false;
+      try {
+        await video.play();
+        soundButton.textContent = 'Som ativado';
+        soundButton.classList.remove('show');
+      } catch (e) {
+        statusBox.textContent = 'Não foi possível iniciar o áudio. Toque novamente.';
+      }
+    });
+
+    document.querySelector('a-scene').addEventListener('arReady', () => {
+      statusBox.textContent = 'Aponte a câmera para a imagem impressa.';
+    });
+
+    document.querySelector('a-scene').addEventListener('arError', () => {
+      statusBox.textContent = 'Não foi possível abrir a câmera. Verifique a permissão e use uma conexão HTTPS.';
+    });
+  </script>
+</body>
+</html>

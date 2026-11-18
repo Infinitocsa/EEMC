@@ -1,0 +1,35 @@
+# Livro Interativo — WebAR
+
+Este projeto usa MindAR + A-Frame para reconhecer a imagem impressa e posicionar o vídeo sobre ela, pelo navegador do celular.
+
+## Arquivos
+- `index.html`: página da experiência.
+- `assets/marcador.png`: imagem que a câmera deve reconhecer.
+- `assets/video.mp4`: vídeo que aparece sobre a imagem.
+- `targets.mind`: arquivo de reconhecimento que você precisa gerar no compilador do MindAR.
+
+## 1. Gerar o arquivo targets.mind
+1. Abra o compilador oficial de imagem do MindAR: https://hiukim.github.io/mind-ar-js-doc/tools/compile/
+2. Envie `assets/marcador.png`.
+3. Clique para compilar e baixe o arquivo `.mind`.
+4. Renomeie o arquivo baixado para `targets.mind`.
+5. Coloque `targets.mind` na mesma pasta deste `index.html`.
+
+## 2. Publicar
+Publique a pasta inteira em um serviço de hospedagem estática com HTTPS, por exemplo GitHub Pages, Netlify ou Vercel. Não altere a estrutura das pastas.
+
+## 3. Testar no celular
+1. Abra o endereço HTTPS no Chrome ou Safari.
+2. Permita o acesso à câmera.
+3. Aponte para a imagem impressa `marcador.png`.
+4. Quando a imagem for reconhecida, o vídeo aparecerá alinhado sobre ela.
+5. Toque em “Ativar som do vídeo” se quiser ouvir o áudio.
+
+## Observações importantes
+- A imagem impressa precisa estar bem iluminada, plana e visível por inteiro.
+- Evite reflexos, sombras fortes e impressão muito pequena.
+- O navegador exige HTTPS para liberar a câmera (localhost também funciona em testes locais).
+- O vídeo está configurado para iniciar sem som automaticamente; isso evita o bloqueio de reprodução automática dos navegadores. O áudio é ativado com um toque.
+- A página foi configurada para um único marcador (`targetIndex: 0`).
+- O vídeo original é 1280×720, 24 fps e 10 segundos. A imagem de referência mede 542×315.
+- Para o vídeo cobrir a imagem inteira, a proporção do vídeo (16:9) é ajustada levemente à proporção da imagem (542:315).
