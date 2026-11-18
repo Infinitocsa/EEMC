@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#101114">
   <title>Livro Interativo — Realidade Aumentada</title>
 
-  <!-- Bibliotecas WebAR -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -17,15 +16,25 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #101114;
+      background: #000;
       font-family: Arial, sans-serif;
     }
 
-    a-scene { position: fixed; inset: 0; }
+    /* A câmera permanece como fundo; o canvas da RA precisa ser transparente. */
+    a-scene {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent !important;
+    }
+    a-scene canvas {
+      background: transparent !important;
+    }
 
     #status {
       position: fixed;
-      z-index: 10;
+      z-index: 20;
       left: 50%;
       bottom: max(18px, env(safe-area-inset-bottom));
       transform: translateX(-50%);
@@ -42,13 +51,12 @@
       pointer-events: none;
       transition: opacity .25s ease;
     }
-
     #status.hidden { opacity: 0; }
 
     #sound {
       display: none;
       position: fixed;
-      z-index: 11;
+      z-index: 21;
       left: 50%;
       bottom: max(76px, calc(env(safe-area-inset-bottom) + 76px));
       transform: translateX(-50%);
@@ -62,7 +70,6 @@
       font-weight: 700;
       cursor: pointer;
     }
-
     #sound.show { display: block; }
   </style>
 </head>
@@ -75,12 +82,11 @@
   <a-scene
     mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001"
     color-space="sRGB"
-    renderer="colorManagement: true; physicallyCorrectLights: true"
+    renderer="alpha: true; antialias: true; colorManagement: true"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      <!-- O vídeo inicia sem áudio para respeitar as regras de autoplay dos celulares. -->
       <video
         id="videoTexture"
         src="./assets/video.mp4"
@@ -96,25 +102,21 @@
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <!--
-      A imagem-marcador mede 542 x 315 (proporção 1,7206).
-      O vídeo mede 1280 x 720 (16:9). O plano acompanha a proporção do marcador;
-      isso causa uma pequena adaptação horizontal para cobrir a página inteira.
+      O marcador impresso é horizontal e mede 542 x 315.
+      A proporção do plano corresponde exatamente à proporção do marcador.
+      O plano fica preso ao alvo MindAR: não é um elemento fixo na tela.
+      Assim, somente a área do marcador é coberta pelo vídeo; o restante
+      da câmera continua visível.
     -->
     <a-entity id="imageTarget" mindar-image-target="targetIndex: 0">
-      <!--
-        A imagem impressa é horizontal (542 x 315).
-        No teste enviado, o plano apareceu em pé; giramos o plano 90 graus
-        no eixo Z para compensar a orientação dos eixos do alvo rastreado.
-        A rotação também corrige a orientação do conteúdo do vídeo.
-        A proporção do plano permanece igual à da imagem-marcador.
-      -->
       <a-video
         id="arVideoPlane"
         src="#videoTexture"
         width="1"
         height="0.58118"
-        position="0 0 0.001"
-        rotation="0 0 90">
+        position="0 0 0.01"
+        rotation="0 0 0"
+        material="shader: flat; side: double">
       </a-video>
     </a-entity>
   </a-scene>
@@ -128,12 +130,13 @@
       const soundButton = document.getElementById('sound');
 
       let targetVisible = false;
-      let hideStatusTimer;
+      let hideStatusTimer = null;
 
       function showStatus(message, hideAfter = 0) {
         statusBox.textContent = message;
         statusBox.classList.remove('hidden');
         window.clearTimeout(hideStatusTimer);
+
         if (hideAfter > 0) {
           hideStatusTimer = window.setTimeout(() => {
             statusBox.classList.add('hidden');
@@ -144,14 +147,17 @@
       target.addEventListener('targetFound', async () => {
         targetVisible = true;
         soundButton.classList.add('show');
-        soundButton.textContent = video.muted ? 'Ativar som do vídeo' : 'Som ativado';
-        showStatus('Imagem reconhecida! O vídeo está sobre a página.', 2600);
+        soundButton.textContent = video.muted
+          ? 'Ativar som do vídeo'
+          : 'Som ativado';
+
+        showStatus('Página reconhecida! Mantenha o livro visível para acompanhar o vídeo.', 3000);
 
         try {
-          // Reprodução silenciosa automática; o áudio depende de toque do usuário.
+          // Começa sem áudio para permitir autoplay em celulares.
           await video.play();
         } catch (error) {
-          showStatus('Imagem reconhecida. Toque no botão para iniciar o vídeo.', 0);
+          showStatus('Página reconhecida. Toque em Reproduzir vídeo para iniciar.', 0);
           soundButton.textContent = 'Reproduzir vídeo';
         }
       });
@@ -160,7 +166,7 @@
         targetVisible = false;
         video.pause();
         soundButton.classList.remove('show');
-        showStatus('Aponte a câmera para a imagem impressa.', 0);
+        showStatus('Aponte a câmera novamente para a página do livro.', 0);
       });
 
       soundButton.addEventListener('click', async () => {
@@ -178,7 +184,7 @@
       });
 
       scene.addEventListener('arReady', () => {
-        showStatus('Câmera pronta! Aponte para a imagem impressa.', 0);
+        showStatus('Câmera pronta! Aponte para a página impressa do livro.', 0);
       });
 
       scene.addEventListener('arError', (event) => {
@@ -191,9 +197,7 @@
         showStatus('Não foi possível carregar o vídeo. Confira se assets/video.mp4 foi publicado.', 0);
       });
 
-      window.addEventListener('beforeunload', () => {
-        video.pause();
-      });
+      window.addEventListener('beforeunload', () => video.pause());
     })();
   </script>
 </body>
