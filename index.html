@@ -101,13 +101,20 @@
       isso causa uma pequena adaptação horizontal para cobrir a página inteira.
     -->
     <a-entity id="imageTarget" mindar-image-target="targetIndex: 0">
+      <!--
+        A imagem impressa é horizontal (542 x 315).
+        No teste enviado, o plano apareceu em pé; giramos o plano 90 graus
+        no eixo Z para compensar a orientação dos eixos do alvo rastreado.
+        A rotação também corrige a orientação do conteúdo do vídeo.
+        A proporção do plano permanece igual à da imagem-marcador.
+      -->
       <a-video
         id="arVideoPlane"
         src="#videoTexture"
         width="1"
         height="0.58118"
         position="0 0 0.001"
-        rotation="0 0 0">
+        rotation="0 0 90">
       </a-video>
     </a-entity>
   </a-scene>
